@@ -1,0 +1,64 @@
+Link : https://atcoder.jp/contests/abc211/tasks/abc211_d
+
+        #include <bits/stdc++.h>
+        using namespace std;
+        #define int long long
+        const int N=2*1e5+6;
+        const int Mod=1e9+7;
+        vector<pair<int,int>>edges;
+        int dp[N];int x;int dis1[N];int disn[N];
+        vector<int>adj[N];vector<int>newadj[N];
+        void bfs(int n,int arr[]){
+            for(int i=1;i<=x;i++){
+                arr[i]=-1;
+            }
+            arr[n]=0;
+            queue<int>q;
+            q.push(n);
+            while(!q.empty()){
+                int u=q.front();
+                q.pop();
+                for(auto r:adj[u]){
+                    if(arr[r]==-1){
+                        arr[r]=arr[u]+1;
+                        q.push(r);
+                    }
+                }
+            }
+        }
+        int solve(int n){
+            if(dp[n]!=-1){
+                return dp[n];
+            }
+            if(n==x){
+                return 1;
+            }
+            int ans=0;
+            for(auto u:newadj[n]){
+                ans+=solve(u);
+                ans=ans%Mod;
+            }
+            return dp[n]=ans;
+        }
+        int32_t main(){
+        ios_base::sync_with_stdio(false);cin.tie(NULL);
+        cin>>x;int y;cin>>y;
+        for(int i=0;i<=x;i++){
+            dp[i]=-1;
+        }
+        for(int i=0;i<y;i++){
+            int s;cin>>s;int d;cin>>d;adj[s].push_back(d);adj[d].push_back(s);edges.push_back({s,d});
+        }
+        bfs(1,dis1);bfs(x,disn);
+        for(auto u:edges){
+            int a=u.first;int b=u.second;
+            if(dis1[a]+1+disn[b]==dis1[x]){
+                newadj[a].push_back(b);
+            }
+            if(dis1[b]+1+disn[a]==dis1[x]){
+                newadj[b].push_back(a);
+            }
+        }
+        cout<<solve(1)<<endl;
+        return 0;
+        }
